@@ -41,6 +41,7 @@ export default function DashboardPage() {
   const [access, setAccess] = useState<"checking" | "allowed" | "denied">("checking");
   const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
 const [statusFilter, setStatusFilter] = useState("all");
+const [searchTerm, setSearchTerm] = useState("");
   useEffect(() => {
     let active = true;
 
@@ -156,16 +157,41 @@ setAccess(isSpecialist ? "allowed" : "denied");
     <option value="completed">Completed</option>
   </select>
 </div>
-
+{/* Search housing assistance requests */}
+<div className="mt-4">
+  <label htmlFor="request-search" className="mr-3 font-medium">
+    Search Requests:
+  </label>
+  <input
+    id="request-search"
+    type="text"
+    value={searchTerm}
+    onChange={(event) => setSearchTerm(event.target.value)}
+    placeholder="Search by request ID, client ID, service, or town"
+    className="w-full max-w-md rounded-lg border p-2"
+  />
+</div>
           <p className="mt-2 text-sm text-slate-600">
 Housing assistance requests submitted by clients.          </p>
 
          <div className="mt-5 space-y-4">
          
 {helpRequests
-  .filter((request) =>
-    statusFilter === "all" || request.status === statusFilter
-  )
+   .filter((request) => {
+    const matchesStatus =
+      statusFilter === "all" || request.status === statusFilter;
+
+    const search = searchTerm.trim().toLowerCase();
+
+    const matchesSearch = [
+      request.id,
+      request.client_id,
+      request.service_type,
+      request.town ?? "",
+    ].some((value) => value.toLowerCase().includes(search));
+
+    return matchesStatus && matchesSearch;
+  })
   .map((request) => (
 
               <div
