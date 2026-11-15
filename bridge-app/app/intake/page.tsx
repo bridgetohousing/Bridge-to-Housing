@@ -1,11 +1,42 @@
  "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
 export default function IntakePage() {
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+const [checkingAuth, setCheckingAuth] = useState(true);
+
+
+useEffect(() => {
+  async function checkAuth() {
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      window.location.replace("/login");
+      return;
+    }
+  
+setCheckingAuth(false);
+
+  }
+
+  checkAuth();
+}, []);
+
+async function handleSignOut() {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    setError("Unable to sign out. Please try again.");
+    return;
+  }
+
+  window.location.replace("/login");
+}
+
 async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
   e.preventDefault();
   const formData = new FormData(e.currentTarget);
@@ -64,7 +95,12 @@ async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 }
 
 
-  return (
+
+if (checkingAuth) {
+  return <main className="p-8">Checking your sign-in...</main>;
+}
+
+return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
       <header className="bg-emerald-900 px-6 py-10 text-white">
         <h1 className="text-3xl font-bold">Bridge to Housing</h1>
@@ -107,6 +143,7 @@ successfully to the Bridge to Housing test database.
             </button>
           </div>
         ) : (
+<>
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
             <label className="block">
               <span className="font-semibold">Name (test only)</span>
@@ -231,6 +268,15 @@ name="details"                placeholder="Describe a fictional housing need..."
               {saving ? "Saving Request..." : "Test Intake Form"}
             </button>
           </form>
+    
+<button
+  type="button"
+  onClick={handleSignOut}
+  className="mt-6 w-full rounded-lg border border-emerald-900 p-3 font-semibold text-emerald-900"
+>
+  Sign Out
+</button>
+ </>     
         )}
       </section>
     </main>
