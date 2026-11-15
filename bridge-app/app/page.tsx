@@ -77,6 +77,8 @@ export default function Home() {
 
             "Community Resource Connections",
 
+"Housing Choice Voucher (HCV) – Housing Quality Standards (HQS) Inspection Request",
+
           ].map((service) => (
 
             <div
