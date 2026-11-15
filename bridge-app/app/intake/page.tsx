@@ -1,15 +1,68 @@
-
-"use client";
-
+ "use client";
 import { useState } from "react";
+import { supabase } from "../../lib/supabase";
 
 export default function IntakePage() {
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+  const formData = new FormData(e.currentTarget);
+  setError("");
+  setSaving(true);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  try {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      throw new Error("Please sign in before submitting a request.");
+    }
+
+
+    const serviceType = String(formData.get("service_type") || "");
+    const housingSituation = String(formData.get("housing_situation") || "");
+    const details = String(formData.get("details") || "");
+    const timeframe = String(formData.get("timeframe") || "");
+    const preferredContact = String(formData.get("preferred_contact") || "");
+
+    if (!serviceType || !housingSituation || !timeframe || !preferredContact) {
+      throw new Error("Please complete all required fields.");
+    }
+
+    const { error: insertError } = await supabase
+      .from("help_requests")
+      .insert({
+        client_id: user.id,
+        service_type: serviceType,
+        town: null,
+        timeframe,
+        preferred_contact: preferredContact,
+        barrier_summary: [
+          `Housing situation: ${housingSituation}`,
+          details,
+        ].filter(Boolean).join("\n\n"),
+      });
+
+    if (insertError) {
+      throw insertError;
+    }
+
     setSubmitted(true);
+  } catch (err) {
+    setError(
+      err instanceof Error
+        ? err.message
+        : "Something went wrong. Please try again."
+    );
+  } finally {
+    setSaving(false);
   }
+}
+
 
   return (
     <main className="min-h-screen bg-gray-50 text-gray-900">
@@ -32,19 +85,19 @@ export default function IntakePage() {
         </p>
 
         <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm">
-          DEMONSTRATION ONLY: Do not enter real names,
-          phone numbers, addresses, or personal information.
-          This form does not send or save requests yet.
+          TESTING MODE ONLY: Do not enter real names,
+phone numbers, addresses, or personal information.
+This form is being tested with fictional information.
         </div>
 
         {submitted ? (
           <div className="mt-8 rounded-xl border bg-white p-6">
             <h3 className="text-2xl font-bold text-emerald-900">
-              Demo Form Completed!
+              Test Request Saved Successfully!
             </h3>
             <p className="mt-3">
-              Your test form worked. No information was submitted
-              to Bridge to Housing or saved.
+            Your fictional housing assistance request was saved
+successfully to the Bridge to Housing test database.
             </p>
             <button
               onClick={() => setSubmitted(false)}
@@ -75,6 +128,7 @@ export default function IntakePage() {
             <label className="block">
               <span className="font-semibold">Service Needed</span>
               <select
+              name="service_type"
                 required
                 defaultValue=""
                 className="mt-2 w-full rounded-lg border bg-white p-3"
@@ -94,6 +148,7 @@ export default function IntakePage() {
             <label className="block">
               <span className="font-semibold">Current Housing Situation</span>
               <select
+                name="housing_situation"
                 required
                 defaultValue=""
                 className="mt-2 w-full rounded-lg border bg-white p-3"
@@ -115,17 +170,65 @@ export default function IntakePage() {
                 How Can We Help? (test information only)
               </span>
               <textarea
-                rows={4}
-                placeholder="Describe a fictional housing need..."
+name="details"                placeholder="Describe a fictional housing need..."
                 className="mt-2 w-full rounded-lg border bg-white p-3"
               />
             </label>
 
+<label className="block">
+  <span className="font-semibold">
+    How Soon Do You Need Assistance?
+  </span>
+  <select
+    name="timeframe"
+    required
+    defaultValue=""
+    className="mt-2 w-full rounded-lg border bg-white p-3"
+  >
+    <option value="" disabled>
+      Select a timeframe
+    </option>
+    <option value="Immediately">Immediately</option>
+    <option value="Within 7 days">Within 7 days</option>
+    <option value="Within 30 days">Within 30 days</option>
+    <option value="Planning ahead">Planning ahead</option>
+  </select>
+</label>
+
+<label className="block">
+  <span className="font-semibold">
+    Preferred Contact Method
+  </span>
+  <select
+    name="preferred_contact"
+    required
+    defaultValue=""
+    className="mt-2 w-full rounded-lg border bg-white p-3"
+  >
+    <option value="" disabled>
+      Select a contact method
+    </option>
+    <option value="Phone">Phone Call</option>
+    <option value="Text">Text Message</option>
+    <option value="Email">Email</option>
+  </select>
+</label>
+
+{error && (
+  <div
+    role="alert"
+    className="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-800"
+  >
+    {error}
+  </div>
+)}
+
             <button
               type="submit"
+              disabled={saving}
               className="w-full rounded-lg bg-emerald-900 p-4 font-semibold text-white"
             >
-              Test Intake Form
+              {saving ? "Saving Request..." : "Test Intake Form"}
             </button>
           </form>
         )}

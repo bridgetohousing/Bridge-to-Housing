@@ -1,8 +1,8 @@
 
 "use client";
 
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabase";
 type Status = "New" | "In Progress" | "Completed";
 
 type Request = {
@@ -38,6 +38,49 @@ const initialRequests: Request[] = [
 ];
 
 export default function RequestsPage() {
+
+const [access, setAccess] = useState<"checking" | "allowed" | "denied">("checking");
+
+const [accessError, setAccessError] = useState("");
+
+useEffect(() => {
+
+let active = true;
+
+async function checkAccess() {
+
+const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+if (userError || !user) {
+  if (active) {
+    setAccess("denied");
+    setAccessError("Please sign in to continue.");
+  }
+  return;
+}
+
+const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("role")
+  .eq("id", user.id)
+  .single();
+
+const isSpecialist = !profileError && profile?.role === "specialist";
+
+if (active) {
+  setAccess(isSpecialist ? "allowed" : "denied");
+}
+
+}
+
+void checkAccess();
+
+return () => {
+  active = false;
+};
+
+}, []);
+
   const [requests, setRequests] = useState(initialRequests);
   const [filter, setFilter] = useState("All");
 
@@ -56,7 +99,27 @@ export default function RequestsPage() {
     );
   }
 
+
+if (access === "checking") {
+  return <main className="p-8">Checking access...</main>;
+}
+
+
+if (access === "denied") {
   return (
+    <main className="p-8">
+      <h1 className="text-2xl font-bold">Access Denied</h1>
+      <p className="mt-2">
+        {accessError || "This page is for authorized housing specialists only."}
+      </p>
+      <a href="/login" className="text-emerald-700 underline">
+        Go to Login
+      </a>
+    </main>
+  );
+}
+
+return (
     <main className="min-h-screen bg-gray-50 text-slate-900">
       <header className="bg-emerald-900 p-8 text-white">
         <h1 className="text-3xl font-bold">

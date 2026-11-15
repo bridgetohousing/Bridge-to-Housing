@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local dashboard backups
+app/dashboard/page.backup.text
+app/dashboard/page.backup.tsx.txt
+
+# Local security testing scripts
+scripts/client-security-test.mjs
+scripts/security-test.mjs
+supabase-check.js

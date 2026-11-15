@@ -22,6 +22,23 @@ export default function Home() {
 
       </header>
 
+<nav className="flex flex-wrap gap-4 px-8 py-5">
+  <a
+    href="/login"
+    className="rounded-lg bg-emerald-900 px-6 py-3 font-semibold text-white hover:bg-emerald-800"
+  >
+    Log In
+  </a>
+
+  <a
+    href="/signup"
+    className="rounded-lg border-2 border-emerald-900 px-6 py-3 font-semibold text-emerald-900 hover:bg-emerald-50"
+  >
+    Create Account
+  </a>
+</nav>
+
+
       <section className="p-8">
 
         <h2 className="text-3xl font-bold">
