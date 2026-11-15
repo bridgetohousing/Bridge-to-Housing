@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
   const [access, setAccess] = useState<"checking" | "allowed" | "denied">("checking");
   const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
-
+const [statusFilter, setStatusFilter] = useState("all");
   useEffect(() => {
     let active = true;
 
@@ -139,11 +139,35 @@ setAccess(isSpecialist ? "allowed" : "denied");
 
         <section className="rounded-xl border bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold">Client Assistance Requests</h2>
+  
+<div className="mt-4">
+  <label htmlFor="status-filter" className="mr-3 font-medium">
+    Filter by Status:
+  </label>
+  <select
+    id="status-filter"
+    value={statusFilter}
+    onChange={(event) => setStatusFilter(event.target.value)}
+    className="rounded-lg border p-2"
+  >
+    <option value="all">All Requests</option>
+    <option value="new">New</option>
+    <option value="in_progress">In Progress</option>
+    <option value="completed">Completed</option>
+  </select>
+</div>
+
           <p className="mt-2 text-sm text-slate-600">
 Housing assistance requests submitted by clients.          </p>
 
-          <div className="mt-5 space-y-4">
-            {helpRequests.map((request) => (
+         <div className="mt-5 space-y-4">
+         
+{helpRequests
+  .filter((request) =>
+    statusFilter === "all" || request.status === statusFilter
+  )
+  .map((request) => (
+
               <div
                 key={request.id}
                 className="rounded-lg border p-4"
