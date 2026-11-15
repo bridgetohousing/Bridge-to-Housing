@@ -203,14 +203,18 @@ onChange={async (event) => {
         <section className="rounded-xl border bg-white p-6 shadow-sm">
           <h2 className="text-2xl font-bold">Housing Services</h2>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            {[
-              "Housing Search & Placement",
-              "Rapid Rehousing Support",
-              "Document Readiness",
-              "Relocation Assistance",
-              "211 / CAN Referrals",
-              "Community Resource Connections",
-            ].map((service) => (
+
+            
+{[
+  "Housing Search & Placement",
+  "Rapid Rehousing Support",
+  "Document Readiness",
+  "Relocation Assistance",
+  "211 / CAN Referrals",
+  "Community Resource Connections",
+  "Housing Choice Voucher (HCV) – Housing Quality Standards (HQS) Inspection Request",
+].map((service) => (
+
               <div
                 key={service}
                 className="rounded-lg bg-emerald-50 p-4 font-medium"

@@ -173,12 +173,17 @@ successfully to the Bridge to Housing test database.
                 <option value="" disabled>
                   Select a service
                 </option>
-                <option>Housing Search Assistance</option>
-                <option>Document Readiness</option>
-                <option>Homelessness Support and Referrals</option>
-                <option>Relocation Assistance</option>
-                <option>Rapid Rehousing Support</option>
-                <option>Other Housing Support</option>
+                
+<option>Housing Search Assistance</option>
+<option>Document Readiness</option>
+<option>Homelessness Support and Referrals</option>
+<option>Relocation Assistance</option>
+<option>Rapid Rehousing Support</option>
+<option>
+  Housing Choice Voucher (HCV) – Housing Quality Standards (HQS) Inspection Request
+</option>
+<option>Other Housing Support</option>
+
               </select>
             </label>
 
