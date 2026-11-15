@@ -62,9 +62,36 @@ async function addCaseNote() {
     return;
   }
 
+
   setCaseNotes((current) => [...current, data.note]);
   setNewNote("");
+
+  // Automatically move a new request to In Progress
+  // after a case note has been saved successfully.
+  if (request.status === "new") {
+    const { data: updatedRequest, error: statusError } = await supabase
+      .from("help_requests")
+      .update({ status: "in_progress" })
+      .eq("id", request.id)
+      .eq("status", "new")
+      .select("status")
+      .single();
+
+    if (statusError) {
+      alert(
+        "Case note saved, but the status could not be updated: " +
+          statusError.message
+      );
+    } else {
+      setRequest((current) =>
+        current
+          ? { ...current, status: updatedRequest.status }
+          : current
+      );
+    }
+  }
 }
+
 
 
   useEffect(() => {
