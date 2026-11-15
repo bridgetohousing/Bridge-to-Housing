@@ -135,6 +135,12 @@ This form is being tested with fictional information.
             Your fictional housing assistance request was saved
 successfully to the Bridge to Housing test database.
             </p>
+           <a
+  href="/my-requests"
+  className="mt-5 block rounded-lg bg-emerald-900 px-5 py-3 text-center font-semibold text-white"
+>
+  View My Housing Requests
+</a>
             <button
               onClick={() => setSubmitted(false)}
               className="mt-5 rounded-lg bg-emerald-900 px-5 py-3 text-white"
@@ -144,7 +150,8 @@ successfully to the Bridge to Housing test database.
           </div>
         ) : (
 <>
-          <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <form onSubmit={handleSubmit} className
+          ="mt-8 space-y-6">
             <label className="block">
               <span className="font-semibold">Name (test only)</span>
               <input
