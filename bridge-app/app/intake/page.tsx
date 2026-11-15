@@ -273,7 +273,14 @@ name="details"                placeholder="Describe a fictional housing need..."
               {saving ? "Saving Request..." : "Test Intake Form"}
             </button>
           </form>
-    
+ 
+<a
+  href="/my-requests"
+  className="mt-6 block rounded-lg bg-emerald-900 p-3 text-center font-semibold text-white"
+>
+  View My Housing Requests
+</a>
+   
 <button
   type="button"
   onClick={handleSignOut}
