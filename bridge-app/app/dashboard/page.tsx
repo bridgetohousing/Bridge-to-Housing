@@ -42,6 +42,7 @@ export default function DashboardPage() {
   const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
 const [statusFilter, setStatusFilter] = useState("all");
 const [searchTerm, setSearchTerm] = useState("");
+const [followUpFilter, setFollowUpFilter] = useState("all");
   useEffect(() => {
     let active = true;
 
@@ -157,6 +158,23 @@ setAccess(isSpecialist ? "allowed" : "denied");
     <option value="completed">Completed</option>
   </select>
 </div>
+{/* Follow-Up Tracking Filter */}
+<div className="mt-4">
+  <label htmlFor="followup-filter" className="mr-3 font-medium">
+    Follow-Up Tracking:
+  </label>
+  <select
+    id="followup-filter"
+    value={followUpFilter}
+    onChange={(event) => setFollowUpFilter(event.target.value)}
+    className="rounded-lg border p-2"
+  >
+    <option value="all">All Requests</option>
+    <option value="new">New Requests</option>
+    <option value="in_progress">Follow-Up Needed</option>
+    <option value="completed">Completed</option>
+  </select>
+</div>
 {/* Search housing assistance requests */}
 <div className="mt-4">
   <label htmlFor="request-search" className="mr-3 font-medium">
@@ -180,6 +198,8 @@ Housing assistance requests submitted by clients.          </p>
    .filter((request) => {
     const matchesStatus =
       statusFilter === "all" || request.status === statusFilter;
+      const matchesFollowUp =
+  followUpFilter === "all" || request.status === followUpFilter;
 
     const search = searchTerm.trim().toLowerCase();
 
@@ -190,7 +210,7 @@ Housing assistance requests submitted by clients.          </p>
       request.town ?? "",
     ].some((value) => value.toLowerCase().includes(search));
 
-    return matchesStatus && matchesSearch;
+   return matchesStatus && matchesFollowUp && matchesSearch;
   })
   .map((request) => (
 
